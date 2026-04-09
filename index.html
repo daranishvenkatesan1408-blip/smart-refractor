@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Smart Refactor AI</title>
+
+  <style>
+    body {
+      font-family: 'Segoe UI';
+      background: #0f172a;
+      color: white;
+      padding: 20px;
+    }
+
+    h1 {
+      color: #38bdf8;
+    }
+
+    textarea {
+      width: 100%;
+      height: 180px;
+      background: #1e293b;
+      color: #fff;
+      border: none;
+      padding: 10px;
+      border-radius: 8px;
+      font-family: monospace;
+    }
+
+    button {
+      margin: 10px 5px;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 6px;
+      background: #38bdf8;
+      color: black;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .box {
+      background: #1e293b;
+      padding: 15px;
+      border-radius: 10px;
+      margin-top: 10px;
+    }
+
+    pre {
+      white-space: pre-wrap;
+    }
+
+    .score {
+      font-size: 20px;
+      color: #4ade80;
+    }
+  </style>
+</head>
+
+<body>
+
+<h1>🚀 Smart Refactor AI</h1>
+<p>Detect issues → Refactor → Improve code quality</p>
+
+<textarea id="code" placeholder="Paste your code here..."></textarea>
+
+<br>
+
+<button type="button" onclick="analyze()">Analyze</button>
+<button type="button" onclick="refactor()">Refactor</button>
+
+<div class="box">
+<h3>🧠 Language</h3>
+<pre id="language">-</pre>
+</div>
+
+<div class="box">
+<h3>📊 Code Score</h3>
+<pre id="score">-</pre>
+</div>
+
+<div class="box">
+<h3>⚠️ Issues</h3>
+<pre id="issues">No issues yet</pre>
+</div>
+
+<div class="box">
+<h3>✨ Refactored Code</h3>
+<pre id="output">No output yet</pre>
+</div>
+
+<div class="box">
+<h3>🔍 Changes</h3>
+<pre id="changes">No changes yet</pre>
+</div>
+
+<script>
+async function analyze() {
+  let code = document.getElementById("code").value;
+
+  if (!code.trim()) {
+    alert("Enter code!");
+    return;
+  }
+
+  let res = await fetch("http://127.0.0.1:8000/analyze/", {
+    method: "POST",
+    headers: {"Content-Type": "application/json"},
+    body: JSON.stringify({code})
+  });
+
+  let data = await res.json();
+
+  document.getElementById("issues").innerText =
+    data.issues?.join("\n") || "No issues";
+
+  document.getElementById("language").innerText =
+    data.language || "-";
+
+  document.getElementById("score").innerText =
+    data.score + "/100";
+}
+
+async function refactor() {
+  let code = document.getElementById("code").value;
+
+  if (!code.trim()) {
+    alert("Enter code!");
+    return;
+  }
+
+  let res = await fetch("http://127.0.0.1:8000/refactor/", {
+    method: "POST",
+    headers: {"Content-Type": "application/json"},
+    body: JSON.stringify({code})
+  });
+
+  let data = await res.json();
+
+  document.getElementById("output").innerText =
+    data.refactored_code || "No output";
+
+  document.getElementById("changes").innerText =
+    data.changes?.join("\n\n") || "No changes";
+}
+</script>
+
+</body>
+</html>
